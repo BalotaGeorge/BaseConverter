@@ -1,0 +1,13 @@
+D:\Pb C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.exe.config
+D:\Pb C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.exe
+D:\Pb C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.pdb
+D:\Pb C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.csprojAssemblyReference.cache
+D:\Pb C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.csproj.CoreCompileInputs.cache
+D:\Pb C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.exe
+D:\Pb C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.pdb
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.exe.config
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.exe
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\bin\Debug\BaseConversion.pdb
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.csprojAssemblyReference.cache
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.exe
+C:\AnyThingElse\PB VS C#\BaseConversion\BaseConversion\obj\Debug\BaseConversion.pdb
