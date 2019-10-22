@@ -13,11 +13,12 @@ namespace BaseConversion
         static bool bOverFlow, bNegativeMark;
         static void ReadAndCheckNumber()
         {
+            sFinalNumber = "";
             bool bAllGood = true;
             Console.Write("Enter the number you would like to convert: ");
             do
             {
-                nCommaPlace = 0;
+                nCommaPlace = -1;
                 bAllGood = true;
                 sInitialNumber = Console.ReadLine();
                 for (int i = 0; i < sInitialNumber.Length; i++)
@@ -26,12 +27,12 @@ namespace BaseConversion
                     if (!((t >= '0' && t <= '9') || (t >= 'A' && t <= 'F') || (t >= 'a' && t <= 'f') || t == '.' || t == ',')) bAllGood = false;
                     else
                     {
-                        if (t == '.' || t == ',') nCommaPlace = i;
+                        if ((t == '.' || t == ',') && i < sInitialNumber.Length - 1) nCommaPlace = i;
                         else
                         {
-                            if (t >= '0' && t <= '9') nSmallestPosBase = t - 48 + 1;
-                            if (t >= 'A' && t <= 'F') nSmallestPosBase = t - 55 + 1;
-                            if (t >= 'a' && t <= 'f') nSmallestPosBase = t - 87 + 1;
+                            if (t >= '0' && t <= '9' && nSmallestPosBase < t - 48 + 1) nSmallestPosBase = t - 48 + 1;
+                            if (t >= 'A' && t <= 'F' && nSmallestPosBase < t - 55 + 1) nSmallestPosBase = t - 55 + 1;
+                            if (t >= 'a' && t <= 'f' && nSmallestPosBase < t - 87 + 1) nSmallestPosBase = t - 87 + 1;
                         }
                     }
                     if (i == 0 && t == '-')
@@ -45,18 +46,20 @@ namespace BaseConversion
         }
         static int ReadAndCheckBase(string sText, int nSmallBase)
         {
-            int nBase = 0;
+            if (nSmallBase == 1) nSmallBase++;
+            int nBase = -int.MaxValue;
             Console.Write(sText);
             do
             {
                 try { nBase = int.Parse(Console.ReadLine()); }
                 catch (FormatException) { Console.Write("Please enter a actual number. Try again: "); }
-                if ((nBase < nSmallBase || nBase > 16) && nBase != 0) 
+                if ((nBase < nSmallBase || nBase > 16) && nBase != -int.MaxValue) 
                 {
-                    Console.Write("Please enter a base value between " + nSmallBase + "-16. Try again: ");
-                    nBase = 0;
+                    if (nSmallBase < 16) Console.Write("Please enter a base value between " + nSmallBase + "-16. Try again: ");
+                    else Console.Write("Please enter a base value of 16. Try again: ");
+                    nBase = -int.MaxValue;
                 }
-            } while (nBase == 0);
+            } while (nBase == -int.MaxValue);
             return nBase;
         }
         static int ConvertBaseToDecimal(string Number, int Base)
@@ -113,39 +116,48 @@ namespace BaseConversion
         {
             char[] sym = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
             string ret = "";
-            while (Number != 0) 
+            int maxCommaDigits = 8;
+            while (Number != 0 && maxCommaDigits > 0) 
             {
                 Number *= Base;
                 int i = (int)Number;
                 ret += sym[i];
                 Number -= i;
+                maxCommaDigits--;
             }
             return ret;
         }
         static void Main(string[] args)
         {
-            ReadAndCheckNumber();
-            nInitialBase = ReadAndCheckBase("Enter the initial base of the number: ", nSmallestPosBase);
-            nFinalBase = ReadAndCheckBase("Enter the final base of the number: ", 2);
-            if (nCommaPlace != 0) 
+            char Desire;
+            do
             {
-                string sBeforeCommaNumber = sInitialNumber.Substring(0, nCommaPlace);
-                string sAfterCommaNumber = sInitialNumber.Substring(nCommaPlace + 1);
-                string sFirstHalf = ConvertDecimalToBase(ConvertBaseToDecimal(sBeforeCommaNumber, nInitialBase), nFinalBase);
-                string sSecondHalf = ConvertDecimalToCommaBase(ConvertCommaBaseToDecimal(sAfterCommaNumber, nInitialBase), nFinalBase);
-                if (sFirstHalf.Length == 0) sFirstHalf = "0";
-                if (bNegativeMark) sFinalNumber = "-" + sFirstHalf + "." + sSecondHalf;
-                else sFinalNumber = sFirstHalf + "." + sSecondHalf;
-            }
-            else
-            {
-                sFinalNumber += bNegativeMark ? "-" : "";
-                sFinalNumber += ConvertDecimalToBase(ConvertBaseToDecimal(sInitialNumber, nInitialBase), nFinalBase);
-                if (sFinalNumber.Length == 0) sFinalNumber = "0";
-            }
-            if (!bOverFlow) Console.WriteLine(sInitialNumber + " B" + nInitialBase + " = " + sFinalNumber + " B" + nFinalBase);
-            else Console.WriteLine("The number you introduced was to large to be converted. Sorry");
-            Console.ReadLine();
+                Console.WriteLine();
+                ReadAndCheckNumber();
+                nInitialBase = ReadAndCheckBase("Enter the initial base of the number: ", nSmallestPosBase);
+                nFinalBase = ReadAndCheckBase("Enter the final base of the number: ", 2);
+                if (nCommaPlace != -1)
+                {
+                    string sBeforeCommaNumber = sInitialNumber.Substring(0, nCommaPlace);
+                    string sAfterCommaNumber = sInitialNumber.Substring(nCommaPlace + 1);
+                    string sFirstHalf = ConvertDecimalToBase(ConvertBaseToDecimal(sBeforeCommaNumber, nInitialBase), nFinalBase);
+                    string sSecondHalf = ConvertDecimalToCommaBase(ConvertCommaBaseToDecimal(sAfterCommaNumber, nInitialBase), nFinalBase);
+                    if (sFirstHalf.Length == 0) sFirstHalf = "0";
+                    if (bNegativeMark) sFinalNumber = "-" + sFirstHalf + "." + sSecondHalf;
+                    else sFinalNumber = sFirstHalf + "." + sSecondHalf;
+                }
+                else
+                {
+                    sFinalNumber += bNegativeMark ? "-" : "";
+                    sFinalNumber += ConvertDecimalToBase(ConvertBaseToDecimal(sInitialNumber, nInitialBase), nFinalBase);
+                    if (sFinalNumber.Length == 0) sFinalNumber = "0";
+                }
+                if (!bOverFlow) Console.WriteLine(sInitialNumber + " B" + nInitialBase + " = " + sFinalNumber + " B" + nFinalBase);
+                else Console.WriteLine("The number you introduced was to large to be converted. Sorry");
+                Console.Write("Would you like to convert another number? (type y if so) ");
+                try { Desire = Console.ReadLine()[0]; }
+                catch (IndexOutOfRangeException) { Desire = 'n'; }
+            } while (Desire == 'y' || Desire == 'Y');
         }
     }
 }
